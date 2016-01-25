@@ -26,6 +26,7 @@ src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js">
       /**
        * @jsx React.DOM
        */
+      var start = new Date().getTime();
 
       //example class for subitems, taken from React tutorial
       var Comment = React.createClass({
@@ -54,20 +55,32 @@ src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js">
           return React.createElement(containerTag, {},
               data.map(function(dataUnit){
                 return React.createElement(dataUnit.klass, 
-                  {data: dataUnit.value});
+                  {data: dataUnit.value, key: dataUnit.key});
               })
           );
         }
       });
+
+      function shuffle(o){
+        for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = 
+        o[--i], o[i] = o[j], o[j] = x);
+        return o;
+      }
+      function someData() {
+        return shuffle([{klass: Comment,
+          value:5, key:1},
+            {klass: Comment, value:4, key:2}, {klass: Comment, 
+            value:"**bold** move", key:3}, {klass: Comment, value:3, key:4}, 
+            {klass: Comment, key: 5,
+            value: ((new Date().getTime() - start)/1000).toFixed()}]);
+      }
       var ListComponentFactory = React.createFactory(ListComponent);
       setInterval(function() {
         ReactDOM.render(
-          ListComponentFactory({containerTag: 'div', data: [{klass: Comment, value:5},
-            {klass: Comment, value:4}, {klass: Comment, value:"**bold** move"},
-            {klass: Comment, value:3}, {klass: Comment, value:6}]}),
+          ListComponentFactory({containerTag: 'div', data: someData()}),
           document.getElementById('list')
         );
-      }, 50);
+      }, 500);
     </script>
   </body>
 </html>
