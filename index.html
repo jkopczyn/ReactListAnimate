@@ -51,12 +51,12 @@ src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js">
         render: function() {
           var containerTag = this.props.containerTag;
           var data = this.props.data;
-          var items = this.props.children;
           var message = "List contains " + data.length + " elements";
           return (
             <div>
               {data.map(function(dataUnit){
-                return <Comment data={dataUnit.value}/>;
+                return React.createElement(dataUnit.klass,
+                  {data: dataUnit.value});
               })}
             </div>
             );
@@ -65,8 +65,8 @@ src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js">
       setInterval(function() {
         React.renderComponent(
           ListComponent({containerTag: 'div', data: [{klass: Comment, value:5},
-            {klass: Comment, value:4}, {klass: Comment, value:3},
-            {klass: Comment, value:2}, {klass: Comment, value:6}]}),
+            {klass: Comment, value:4}, {klass: Comment, value:"**bold** move"},
+            {klass: Comment, value:3}, {klass: Comment, value:6}]}),
           document.getElementById('list')
         );
       }, 50);
