@@ -2,47 +2,72 @@
 <html>
   <head>
     <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
-    <title>Basic Example</title>
+    <title>List Component</title>
     <link rel="stylesheet" href="../shared/css/base.css" />
   </head>
   <body>
-    <h1>Basic Example</h1>
-    <div id="container">
+    <h1>List Component</h1>
+    <div id="list">
       <p>
-        To install React, follow the instructions on
-        <a href="http://www.github.com/facebook/react/">GitHub</a>.
-      </p>
-      <p>
-        If you can see this, React is not working right.
-        If you checked out the source from GitHub make sure to run <code>grunt</code>.
+        If you can see this, the app is not working right.
       </p>
     </div>
-    <h4>Example Details</h4>
-    <p>This is written in vanilla JavaScript (without JSX) and transformed in the browser.<p>
-    <p>
-      Learn more about React at
-      <a href="http://facebook.github.io/react" target="_blank">facebook.github.io/react</a>.
-    </p>
-    <script src="../shared/thirdparty/es5-shim.min.js"></script>
-    <script src="../shared/thirdparty/es5-sham.min.js"></script>
-    <script src="../shared/thirdparty/console-polyfill.js"></script>
-    <script src="../../build/react.js"></script>
-    <script>
-      var ExampleApplication = React.createClass({
-        render: function() {
-          var elapsed = Math.round(this.props.elapsed  / 100);
-          var seconds = elapsed / 10 + (elapsed % 10 ? '' : '.0' );
-          var message =
-            'React has been successfully running for ' + seconds + ' seconds.';
+    <script
+src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js">
+    </script>
+    <script
+src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js">
+    </script>
+    <script src="./shared/thirdparty/es5-shim.min.js"></script>
+    <script src="./shared/thirdparty/es5-sham.min.js"></script>
+    <script src="./shared/thirdparty/console-polyfill.js"></script>
+    <script src="./build/react.js"></script>
+    <script src="../../build/JSXTransformer.js"></script>
+    <script type="text/jsx">
+      /**
+       * @jsx React.DOM
+       */
 
-          return React.DOM.p(null, message);
+      //example class for subitems, taken from React tutorial
+      var Comment = React.createClass({
+      rawMarkup: function() {
+      var rawMarkup = marked(this.props.data.toString(), {sanitize:
+        true});
+      return { __html: rawMarkup };
+      },
+      
+      render: function() {
+      return (
+        <div className="comment">
+          <h2 className="commentAuthor">
+            {this.props.author}
+          </h2>
+          <span dangerouslySetInnerHTML={this.rawMarkup()} />
+        </div>
+        );
+      }
+      });
+      var ListComponent = React.createClass({
+        render: function() {
+          var containerTag = this.props.containerTag;
+          var data = this.props.data;
+          var items = this.props.children;
+          var message = "List contains " + data.length + " elements";
+          return (
+            <div>
+              {data.map(function(dataUnit){
+                return <Comment data={dataUnit.value}/>;
+              })}
+            </div>
+            );
         }
       });
-      var start = new Date().getTime();
       setInterval(function() {
         React.renderComponent(
-          ExampleApplication({elapsed: new Date().getTime() - start}),
-          document.getElementById('container')
+          ListComponent({containerTag: 'div', data: [{klass: Comment, value:5},
+            {klass: Comment, value:4}, {klass: Comment, value:3},
+            {klass: Comment, value:2}, {klass: Comment, value:6}]}),
+          document.getElementById('list')
         );
       }, 50);
     </script>
