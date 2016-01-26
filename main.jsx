@@ -27,20 +27,15 @@ return (
 });
 
 var ListComponent = React.createClass({
-  shuffleChildren() {
-    this.setState({
-      children: shuffle(this.state.children)
-    });
-  },
   render: function() {
     return (<div className="listDemo">
-      {/*<button type="button" onClick={this.shuffleChildren}>Shuffle Children</button>
+      {/*<button type="button" onClick={this.shuffleChildren}>Shuffle Children</button>*/}
       <ReactCSSTransitionGroup transitionName="list" 
-        transitionEnterTimeout={5000} transitionLeaveTimeout={3000}>*/}
+        transitionEnterTimeout={5000} transitionLeaveTimeout={3000}>
         <Shuffle duration={this.props.duration} fade={this.props.fade}>
           {this.props.children}
         </Shuffle>
-      {/*</ReactCSSTransitionGroup>*/}
+      </ReactCSSTransitionGroup>
     </div>)
   }
 });
@@ -60,71 +55,15 @@ function someData() {
       data: ((new Date().getTime() - start)/1000).toFixed()}]);
 }
 
-const alphabet = [
-  'a','b','c','d','e','f','g','h','i','j','k','l','m',
-  'n','o','p','q','r','s','t','u','v','w','x','y','z']
-
-const App = React.createClass({
-  getInitialState() {
-    return {
-      children: alphabet,
-      filtered: false
-    }
-  },
-  shuffleChildren() {
-    this.setState({
-      children: shuffle(this.state.children)
-    });
-  },
-  filterChildren() {
-    if (this.state.filtered === false) {
-      var newChildren = this.state.children.filter(function(child,index){
-        if (index % 2 ===0) {
-          return child
-        }
-      });
-      this.setState({
-        children: newChildren,
-        filtered: true
-      });
-    } else {
-      this.setState({
-        children: alphabet,
-        filtered: false
-      });
-    }
-  },
-  render() {
-    return (<div className="demo">
-      {/*<button type="button" onClick={this.shuffleChildren}>Shuffle Children</button>
-        <button type="button" onClick={this.filterChildren}>Filter Children</button>*/}
-        <Shuffle duration={500} fade={false}>
-          {this.props.children}
-        </Shuffle>
-      </div>)
-  }
-});
-
-const content = document.getElementById('content');
-
 setInterval(function() {
   ReactDOM.render(
     <ListComponent duration={500} fade={false}>
       {someData().map(function(comment) {
-        return (<span key={comment.key}>
+        return (<div key={comment.key}>
           {comment.data}
-        </span>)
+        </div>)
       })}
     </ListComponent>,
     document.getElementById('list')
   );
-  //ReactDOM.render(<App>
-  //  {shuffle(alphabet).map(function(letter) {
-  //      return (
-  //            <span className="tile" key={letter}>
-  //              {letter}
-  //            </span>
-  //          )
-  //    })}
-  //  </App>, document.getElementById('content'))
 }, 2000);
