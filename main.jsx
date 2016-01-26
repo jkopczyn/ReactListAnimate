@@ -33,18 +33,17 @@ var ListComponent = React.createClass({
     });
   },
   render: function() {
-    return <div>
-    {/*<button type="button" onClick={this.shuffleChildren}>Shuffle Children</button>*/}
+    return (<div className="listDemo">
+      {/*<button type="button" onClick={this.shuffleChildren}>Shuffle Children</button>
       <ReactCSSTransitionGroup transitionName="list" 
-        transitionEnterTimeout={5000} transitionLeaveTimeout={3000}>
-        <Shuffle duration={500} fade={false}>
+        transitionEnterTimeout={5000} transitionLeaveTimeout={3000}>*/}
+        <Shuffle duration={this.props.duration} fade={this.props.fade}>
           {this.props.children}
         </Shuffle>
-      </ReactCSSTransitionGroup>
-    </div>
+      {/*</ReactCSSTransitionGroup>*/}
+    </div>)
   }
 });
-var ListComponentFactory = React.createFactory(ListComponent);
 
 function shuffle(o){
   for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = 
@@ -96,15 +95,13 @@ const App = React.createClass({
     }
   },
   render() {
-    return (
-      <div className="demo">
+    return (<div className="demo">
       {/*<button type="button" onClick={this.shuffleChildren}>Shuffle Children</button>
         <button type="button" onClick={this.filterChildren}>Filter Children</button>*/}
         <Shuffle duration={500} fade={false}>
           {this.props.children}
         </Shuffle>
-      </div>
-    )
+      </div>)
   }
 });
 
@@ -112,20 +109,22 @@ const content = document.getElementById('content');
 
 setInterval(function() {
   ReactDOM.render(
-    <ListComponent>
+    <ListComponent duration={500} fade={false}>
       {someData().map(function(comment) {
-        return <Comment data={comment.data} key={comment.key} />
+        return (<span key={comment.key}>
+          {comment.data}
+        </span>)
       })}
     </ListComponent>,
     document.getElementById('list')
   );
-  ReactDOM.render(<App>
-    {shuffle(alphabet).map(function(letter) {
-        return (
-              <div className="tile" key={letter}>
-                <img src={"http://placehold.it/100x100&text=" + letter} />
-              </div>
-            )
-      })}
-    </App>, document.getElementById('content'))
+  //ReactDOM.render(<App>
+  //  {shuffle(alphabet).map(function(letter) {
+  //      return (
+  //            <span className="tile" key={letter}>
+  //              {letter}
+  //            </span>
+  //          )
+  //    })}
+  //  </App>, document.getElementById('content'))
 }, 2000);
