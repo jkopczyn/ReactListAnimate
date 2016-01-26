@@ -26,16 +26,9 @@ return (
 
 var ListComponent = React.createClass({
   render: function() {
-    var containerTag = this.props.containerTag.toString();
-    var data = this.props.data;
     return <ReactCSSTransitionGroup transitionName="list"
-          transitionEnterTimeout={5000} transitionLeaveTimeout={3000}
-          component={containerTag}>
-        {data.map(function(dataUnit){
-            return React.createElement(dataUnit.klass, 
-              {data: dataUnit.value, key: dataUnit.key});
-          })
-        }
+          transitionEnterTimeout={5000} transitionLeaveTimeout={3000}>
+        {this.props.children}
     </ReactCSSTransitionGroup>
   }
 });
@@ -49,16 +42,20 @@ function shuffle(o){
 
 function someData() {
   return shuffle([{klass: Comment,
-    value:5, key:1},
-      {klass: Comment, value:4, key:2}, {klass: Comment, 
-      value:"**bold** move", key:3}, {klass: Comment, value:3, key:4}, 
+    data:5, key:1},
+      {klass: Comment, data:4, key:2}, {klass: Comment, 
+      data:"**bold** move", key:3}, {klass: Comment, data:3, key:4}, 
       {klass: Comment, key: 5,
-      value: ((new Date().getTime() - start)/1000).toFixed()}]);
+      data: ((new Date().getTime() - start)/1000).toFixed()}]);
 }
 
 setInterval(function() {
   ReactDOM.render(
-    ListComponentFactory({containerTag: 'div', data: someData()}),
+    <ListComponent>
+      {someData().map(function(comment) {
+        return <Comment data={comment.data} key={comment.key} />
+      })}
+    </ListComponent>,
     document.getElementById('list')
   );
 }, 2000);
