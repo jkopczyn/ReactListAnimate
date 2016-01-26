@@ -28,9 +28,8 @@ var ListComponent = React.createClass({
   render: function() {
     var containerTag = this.props.containerTag.toString();
     var data = this.props.data;
-    var message = "List contains " + data.length + " elements";
-    return <ReactCSSTransitionGroup transitionName="example"
-          transitionEnterTimeout={500} transitionLeaveTimeout={300}
+    return <ReactCSSTransitionGroup transitionName="list"
+          transitionEnterTimeout={5000} transitionLeaveTimeout={3000}
           component={containerTag}>
         {data.map(function(dataUnit){
             return React.createElement(dataUnit.klass, 
@@ -44,9 +43,10 @@ var ListComponentFactory = React.createFactory(ListComponent);
 
 function shuffle(o){
   for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = 
-  o[--i], o[i] = o[j], o[j] = x);
+  o[--i], o[i] = o[j], o[j] = x, x['key'] = i*j);
   return o;
 }
+
 function someData() {
   return shuffle([{klass: Comment,
     value:5, key:1},
@@ -55,9 +55,10 @@ function someData() {
       {klass: Comment, key: 5,
       value: ((new Date().getTime() - start)/1000).toFixed()}]);
 }
+
 setInterval(function() {
   ReactDOM.render(
     ListComponentFactory({containerTag: 'div', data: someData()}),
     document.getElementById('list')
   );
-}, 500);
+}, 2000);
