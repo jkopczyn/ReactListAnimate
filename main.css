@@ -15,3 +15,26 @@
   opacity: 0.01;
   transition: opacity 3000ms ease-in;
 }
+
+
+* {
+  box-sizing: border-box;
+}
+.tile {
+  display: block;
+  float: left;
+  width: 100px;
+  height: 100px;
+  margin: 20px;
+}
+.tile img {
+  display: block;
+  width: 100px;
+  height: 100px;
+}
+.demo
+{
+  width: 80%;
+  margin: auto;
+  position: relative;
+}
