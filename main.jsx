@@ -1,8 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
-var Shuffle = require('react-shuffle');
-
+var ReactCloneWithProps = require('react-addons-clone-with-props');
 
 var start = new Date().getTime();
 
@@ -27,18 +26,77 @@ return (
 });
 
 var ListComponent = React.createClass({
+  getInitialState: function() {
+    return {}
+  },
+
+  componentWillUpdate: function(nextProps, nextState) {
+    var self = this;
+    if(nextProps) {
+      this.setState({
+        stage: 0,
+      oldChildPositions: Object.keys(this.refs).map(function(key) {
+        return ReactDOM.findDOMNode(self.refs[key]).getClientRects()[0];
+      })
+    });
+    } else if (nextState && nextState.stage == 1) {
+      //do nothing
+    }
+  },
+
+  componentDidUpdate: function(prevProps, prevState) {
+    var self = this;
+    if(this.state.stage == 0) {
+      this.setState({
+        newChildPositions: Object.keys(self.refs).map(function(key) {
+        return ReactDOM.findDOMNode(self.refs[key]).getClientRects()[0];
+        }),
+        stage: 1,
+      });
+    } else if (this.state.stage == 1) {
+      this.setState({
+        stage: 2
+      });
+    } else if (this.state.stage == 2) {
+      this.setState({
+        stage: 3
+      });
+    }
+  },
+
   render: function() {
+    transitionStyle = { 
+      WebkitTransition: ['left '+this.props.duration+' ease-in-out',
+        'top '+this.props.duration+' ease-in-out'],
+    };
+    if(this.state.stage == 0) {
+      transitionStyle.Opacity = 0;
+    } else if(this.state.stage == 1) {
+      transitionStyle.Opacity = 1;
+    }
+    if (this.state.stage < 3) {
+      transitionStyle.Position = 'absolute';
+    }
+    var state = this.state;
     return (<div className="listDemo">
-      {/*<button type="button" onClick={this.shuffleChildren}>Shuffle Children</button>*/}
-      <ReactCSSTransitionGroup transitionName="list" 
-        transitionEnterTimeout={5000} transitionLeaveTimeout={3000}>
-        <Shuffle duration={this.props.duration} fade={this.props.fade}>
-          {this.props.children}
-        </Shuffle>
-      </ReactCSSTransitionGroup>
+        {React.Children.map(this.props.children, function(child, index) {
+          childState = {}
+          if (state.stage == 1) {
+            childState['top'] =  state.oldChildPositions[index]['top'];
+            childState['left'] = state.oldChildPositions[index]['left'];
+          } else if (state.stage == 2) {
+            childState['top'] =  state.newChildPositions[index]['top'];
+            childState['left'] = state.newChildPositions[index]['left'];
+          }
+          return <div ref={index}
+                    style={Object.assign(childState, transitionStyle)}>
+                    {child}
+                  </div>
+          })
+        }
     </div>)
   }
-});
+})
 
 function shuffle(o){
   for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = 
@@ -46,18 +104,29 @@ function shuffle(o){
   return o;
 }
 
+function randFilter(list) {
+  var newList = []
+  for(var i = 0; i < list.length; i++) {
+    var j = Math.floor(Math.random() * 2);
+    if(j == 1) {
+      newList.push(list[i]);
+    }
+  }
+  return newList;
+}
+
 function someData() {
-  return shuffle([{klass: Comment,
+  return shuffle(randFilter([{klass: Comment,
     data:5, key:1},
       {klass: Comment, data:4, key:2}, {klass: Comment, 
       data:"**bold** move", key:3}, {klass: Comment, data:3, key:4}, 
       {klass: Comment, key: 5,
-      data: ((new Date().getTime() - start)/1000).toFixed()}]);
+      data: ((new Date().getTime() - start)/1000).toFixed()}]));
 }
 
 setInterval(function() {
   ReactDOM.render(
-    <ListComponent duration={500} fade={false}>
+    <ListComponent duration={500}>
       {someData().map(function(comment) {
         return (<div key={comment.key}>
           {comment.data}
